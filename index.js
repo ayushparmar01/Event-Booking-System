@@ -41,6 +41,7 @@ app.listen(PORT, () => {
 
 const express = require("express");
 const dotenv = require("dotenv");
+const path = require("path");
 const connectDB = require("./config/db");
 
 dotenv.config();
@@ -50,9 +51,10 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
-// Test route
-app.get("/", (req, res) => {
+// Health check (browser me "/" ab frontend page kholta hai)
+app.get("/api/health", (req, res) => {
     res.json({
         success: true,
         message: "Booking System Backend is running"
@@ -64,8 +66,6 @@ app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/categories", require("./routes/categoryRoutes"));
 app.use("/api/events", require("./routes/eventRoutes"));
 app.use("/api/bookings", require("./routes/bookingRoutes"));
-
-
 
 // Server
 const PORT = process.env.PORT || 5000;

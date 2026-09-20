@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusPass - Book campus events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#events"><span class="brand-mark" aria-hidden="true"></span>CampusPass</a>
+      <nav class="nav" aria-label="Main">
+        <a href="#events" data-nav="events">Events</a>
+        <a href="#bookings" data-nav="bookings" id="nav-bookings" hidden>My bookings</a>
+        <a href="#admin" data-nav="admin" id="nav-admin" hidden>Admin</a>
+      </nav>
+      <div class="account" id="account"></div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Events (public) -->
+    <section class="view" id="view-events">
+      <div class="hero">
+        <h1>Pick an event, book your seats.</h1>
+        <p>Fests, workshops and talks happening on campus. Choose one, choose how many seats, and you are in.</p>
+      </div>
+      <div class="chips" id="chips" aria-label="Filter by category"></div>
+      <div class="tickets" id="event-list"></div>
+    </section>
+
+    <!-- My bookings (login needed) -->
+    <section class="view" id="view-bookings" hidden>
+      <h1 class="page-title">My bookings</h1>
+      <div class="tickets" id="booking-list"></div>
+    </section>
+
+    <!-- Admin (admin only) -->
+    <section class="view" id="view-admin" hidden>
+      <h1 class="page-title">Admin</h1>
+      <div class="admin-grid">
+        <div>
+          <section class="panel">
+            <h2>Add category</h2>
+            <form id="cat-form">
+              <div class="field">
+                <label for="cat-name">Category name</label>
+                <input id="cat-name" name="name" required maxlength="40" placeholder="Music">
+              </div>
+              <button class="btn primary" type="submit">Add category</button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <h2>Add event</h2>
+            <form id="event-form">
+              <div class="field">
+                <label for="ev-title">Title</label>
+                <input id="ev-title" name="title" required maxlength="100">
+              </div>
+              <div class="field">
+                <label for="ev-desc">Description</label>
+                <textarea id="ev-desc" name="description" rows="3" required></textarea>
+              </div>
+              <div class="field">
+                <label for="ev-date">Date and time</label>
+                <input id="ev-date" name="date" type="datetime-local" required>
+              </div>
+              <div class="field">
+                <label for="ev-location">Location</label>
+                <input id="ev-location" name="location" required>
+              </div>
+              <div class="row-2">
+                <div class="field">
+                  <label for="ev-price">Price (Rs.)</label>
+                  <input id="ev-price" name="price" type="number" min="0" step="1" value="0" required>
+                </div>
+                <div class="field">
+                  <label for="ev-seats">Total seats</label>
+                  <input id="ev-seats" name="totalSeats" type="number" min="1" step="1" required>
+                </div>
+              </div>
+              <div class="field">
+                <label for="ev-category">Category</label>
+                <select id="ev-category" name="category" required></select>
+                <p class="hint" id="ev-category-hint" hidden>Add a category first.</p>
+              </div>
+              <p class="form-error" role="alert"></p>
+              <button class="btn primary" type="submit">Add event</button>
+            </form>
+          </section>
+        </div>
+
+        <div>
+          <section class="panel">
+            <h2>Events</h2>
+            <div id="admin-events"></div>
+          </section>
+          <section class="panel">
+            <h2>All bookings</h2>
+            <div class="table-wrap" id="admin-bookings"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Log in / Sign up -->
+  <dialog id="auth-dialog" aria-labelledby="auth-title">
+    <div class="dialog-body">
+      <div class="dialog-head">
+        <h2 id="auth-title">Log in</h2>
+        <button class="icon-btn" type="button" data-action="close" aria-label="Close">&times;</button>
+      </div>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" type="button" data-action="auth-tab" data-id="login" aria-selected="true">Log in</button>
+        <button class="tab" role="tab" type="button" data-action="auth-tab" data-id="register" aria-selected="false">Create account</button>
+      </div>
+
+      <form id="login-form">
+        <div class="field">
+          <label for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="login-password">Password</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <p class="form-error" role="alert"></p>
+        <button class="btn primary block" type="submit">Log in</button>
+      </form>
+
+      <form id="register-form" hidden>
+        <div class="field">
+          <label for="reg-name">Name</label>
+          <input id="reg-name" name="name" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="reg-email">Email</label>
+          <input id="reg-email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="reg-password">Password</label>
+          <input id="reg-password" name="password" type="password" autocomplete="new-password" minlength="8" required>
+          <p class="hint">At least 8 characters.</p>
+        </div>
+        <p class="form-error" role="alert"></p>
+        <button class="btn primary block" type="submit">Create account</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Book seats -->
+  <dialog id="book-dialog" aria-labelledby="book-title">
+    <form class="dialog-body" id="book-form">
+      <div class="dialog-head">
+        <h2 id="book-title">Book seats</h2>
+        <button class="icon-btn" type="button" data-action="close" aria-label="Close">&times;</button>
+      </div>
+      <div class="book-event" id="book-event"></div>
+
+      <label class="book-label" for="book-seats">How many seats?</label>
+      <div class="stepper">
+        <button type="button" data-action="seat-minus" aria-label="One seat less">&minus;</button>
+        <input id="book-seats" type="number" min="1" step="1" value="1" inputmode="numeric">
+        <button type="button" data-action="seat-plus" aria-label="One seat more">+</button>
+      </div>
+      <p class="hint" id="book-hint"></p>
+
+      <div class="total-row">
+        <span>Total</span>
+        <strong id="book-total"></strong>
+      </div>
+      <p class="form-error" id="book-error" role="alert"></p>
+      <button class="btn primary block" id="book-confirm" type="submit">Confirm booking</button>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
